@@ -1,0 +1,1111 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Open Day — Tahala Mielohasina</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #c9a84c;
+    --gold-light: #e8c97a;
+    --gold-pale: #f5e9c8;
+    --dark: #0b1a0f;
+    --dark-2: #122016;
+    --dark-3: #1a2e1e;
+    --green-deep: #0f2e1a;
+    --green-mid: #1d4a28;
+    --green-light: #3a7048;
+    --cream: #f7f0e3;
+    --cream-2: #ede0c4;
+    --text-light: #d4c9a8;
+    --text-muted: #8a9e8e;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--dark);
+    color: var(--cream);
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 300;
+    overflow-x: hidden;
+  }
+
+  /* LOADER */
+  .loader {
+    position: fixed;
+    inset: 0;
+    background: var(--dark);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 20px;
+    transition: opacity 0.8s ease, visibility 0.8s ease;
+  }
+
+  .loader.hidden { opacity: 0; visibility: hidden; }
+
+  .loader-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px;
+    font-style: italic;
+    color: var(--gold);
+    letter-spacing: 4px;
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  .loader-line {
+    width: 0;
+    height: 1px;
+    background: var(--gold);
+    animation: expand 1.8s ease forwards;
+  }
+
+  @keyframes expand { to { width: 120px; } }
+  @keyframes pulse { 0%,100%{opacity:0.5} 50%{opacity:1} }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 4rem 2rem;
+    overflow: hidden;
+  }
+
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 50% 100%, rgba(29,74,40,0.6) 0%, transparent 70%),
+      radial-gradient(ellipse 50% 40% at 80% 20%, rgba(201,168,76,0.08) 0%, transparent 60%),
+      var(--dark);
+  }
+
+  .particles {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .particle {
+    position: absolute;
+    border-radius: 50%;
+    background: var(--gold);
+    opacity: 0;
+    animation: float var(--dur) ease-in-out var(--delay) infinite;
+  }
+
+  @keyframes float {
+    0% { transform: translateY(100vh) scale(0); opacity: 0; }
+    10% { opacity: 0.4; }
+    90% { opacity: 0.1; }
+    100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+  }
+
+  .badge-top {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    border: 1px solid rgba(201,168,76,0.4);
+    padding: 8px 24px;
+    font-size: 10px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 2rem;
+    position: relative;
+    z-index: 1;
+    opacity: 0;
+    animation: fadeUp 1s ease 1.8s forwards;
+  }
+
+  .badge-top::before, .badge-top::after {
+    content: '';
+    width: 20px;
+    height: 1px;
+    background: var(--gold);
+    opacity: 0.5;
+  }
+
+  .hero-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(60px, 12vw, 110px);
+    font-weight: 300;
+    line-height: 0.9;
+    color: var(--cream);
+    letter-spacing: -2px;
+    position: relative;
+    z-index: 1;
+    opacity: 0;
+    animation: fadeUp 1.2s ease 2s forwards;
+  }
+
+  .hero-title em {
+    font-style: italic;
+    color: var(--gold);
+    display: block;
+  }
+
+  .hero-subtitle {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(16px, 3vw, 22px);
+    font-style: italic;
+    color: var(--text-light);
+    margin-top: 1.5rem;
+    letter-spacing: 1px;
+    position: relative;
+    z-index: 1;
+    opacity: 0;
+    animation: fadeUp 1s ease 2.2s forwards;
+  }
+
+  .hero-date {
+    margin-top: 2.5rem;
+    position: relative;
+    z-index: 1;
+    opacity: 0;
+    animation: fadeUp 1s ease 2.4s forwards;
+  }
+
+  .date-pill {
+    display: inline-block;
+    background: var(--gold);
+    color: var(--dark);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    padding: 10px 30px;
+    border-radius: 100px;
+  }
+
+  .scroll-hint {
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-muted);
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    z-index: 1;
+    opacity: 0;
+    animation: fadeUp 1s ease 3s forwards;
+  }
+
+  .scroll-line {
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, var(--gold), transparent);
+    animation: scrollDrop 2s ease-in-out infinite;
+  }
+
+  @keyframes scrollDrop {
+    0%,100%{transform:scaleY(0);transform-origin:top} 50%{transform:scaleY(1)}
+  }
+
+  @keyframes fadeUp {
+    from { opacity:0; transform:translateY(30px); }
+    to { opacity:1; transform:translateY(0); }
+  }
+
+  /* SECTION STYLES */
+  section {
+    padding: 6rem 2rem;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  .section-label {
+    font-size: 10px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    max-width: 60px;
+    height: 1px;
+    background: var(--gold);
+    opacity: 0.4;
+  }
+
+  .section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(36px, 6vw, 56px);
+    font-weight: 300;
+    line-height: 1.1;
+    color: var(--cream);
+    margin-bottom: 2rem;
+  }
+
+  .section-title em { font-style: italic; color: var(--gold); }
+
+  /* DIVIDER */
+  .divider {
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(201,168,76,0.3), transparent);
+    margin: 0;
+  }
+
+  /* ACTIVITES */
+  .activites-section { background: var(--dark-2); padding: 6rem 2rem; }
+  .activites-inner { max-width: 1000px; margin: 0 auto; }
+
+  .activites-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1px;
+    background: rgba(201,168,76,0.1);
+    border: 1px solid rgba(201,168,76,0.15);
+    margin-top: 3rem;
+  }
+
+  .activite-card {
+    background: var(--dark-2);
+    padding: 2rem 1.5rem;
+    text-align: center;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .activite-card::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 0;
+    background: rgba(201,168,76,0.06);
+    transition: height 0.3s ease;
+  }
+
+  .activite-card:hover::before { height: 100%; }
+
+  .activite-icon {
+    font-size: 32px;
+    margin-bottom: 12px;
+    display: block;
+    transition: transform 0.3s ease;
+  }
+
+  .activite-card:hover .activite-icon { transform: scale(1.2) rotate(-5deg); }
+
+  .activite-name {
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-light);
+    font-weight: 400;
+  }
+
+  .activite-card.featured {
+    background: rgba(201,168,76,0.08);
+    border: 1px solid rgba(201,168,76,0.3);
+  }
+
+  .activite-card.featured .activite-name { color: var(--gold); }
+
+  .karting-note-small {
+    text-align: center;
+    margin-top: 1.5rem;
+    font-size: 12px;
+    color: var(--text-muted);
+    font-style: italic;
+    font-family: 'Cormorant Garamond', serif;
+  }
+
+  /* INFOS PRATIQUES */
+  .infos-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-top: 3rem;
+  }
+
+  .info-block {
+    border: 1px solid rgba(201,168,76,0.15);
+    padding: 2rem;
+    position: relative;
+    transition: border-color 0.3s ease;
+  }
+
+  .info-block:hover { border-color: rgba(201,168,76,0.4); }
+
+  .info-block::before {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: 2rem;
+    width: 40px;
+    height: 2px;
+    background: var(--gold);
+  }
+
+  .info-label {
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+  }
+
+  .info-value {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 32px;
+    font-weight: 300;
+    color: var(--gold);
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+
+  .info-sub {
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+
+  .info-block.full { grid-column: span 2; }
+
+  /* PICNIC */
+  .picnic-block {
+    margin-top: 3rem;
+    padding: 2.5rem;
+    border-left: 2px solid var(--gold);
+    background: rgba(201,168,76,0.04);
+  }
+
+  .picnic-block p {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--cream);
+    line-height: 1.6;
+  }
+
+  .picnic-block p span { color: var(--gold); }
+
+  /* ACCES */
+  .acces-section { background: var(--green-deep); padding: 6rem 2rem; }
+  .acces-inner { max-width: 1000px; margin: 0 auto; }
+
+  .acces-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem;
+    margin-top: 3rem;
+  }
+
+  .acces-card {
+    text-align: center;
+    padding: 2.5rem 1.5rem;
+    border: 1px solid rgba(201,168,76,0.15);
+    position: relative;
+    transition: transform 0.3s ease, border-color 0.3s ease;
+  }
+
+  .acces-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(201,168,76,0.4);
+  }
+
+  .acces-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 72px;
+    font-weight: 300;
+    color: rgba(201,168,76,0.2);
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+
+  .acces-title-card {
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 10px;
+  }
+
+  .acces-desc {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.7;
+  }
+
+  /* CTA */
+  .cta-section {
+    text-align: center;
+    padding: 8rem 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cta-bg {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 60% 80% at 50% 50%, rgba(201,168,76,0.08) 0%, transparent 70%);
+  }
+
+  .cta-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(40px, 8vw, 80px);
+    font-weight: 300;
+    color: var(--cream);
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  .cta-title em { font-style: italic; color: var(--gold); }
+
+  .cta-sub {
+    font-size: 13px;
+    color: var(--text-muted);
+    letter-spacing: 1px;
+    margin-bottom: 3rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  .cta-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--gold);
+    color: var(--dark);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    padding: 18px 40px;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    position: relative;
+    z-index: 1;
+    transition: all 0.3s ease;
+    overflow: hidden;
+  }
+
+  .cta-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--gold-light);
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+  }
+
+  .cta-btn:hover::before { transform: translateX(0); }
+  .cta-btn span { position: relative; }
+
+  .cta-btn-arrow {
+    position: relative;
+    transition: transform 0.3s ease;
+  }
+
+  .cta-btn:hover .cta-btn-arrow { transform: translateX(4px); }
+
+  .countdown {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin-top: 4rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  .count-block { text-align: center; }
+
+  .count-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 48px;
+    font-weight: 300;
+    color: var(--gold);
+    line-height: 1;
+    display: block;
+  }
+
+  .count-label {
+    font-size: 9px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-top: 4px;
+    display: block;
+  }
+
+  .count-sep {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 40px;
+    color: rgba(201,168,76,0.3);
+    align-self: flex-start;
+    padding-top: 4px;
+  }
+
+  /* MODAL */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    z-index: 900;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.4s ease;
+  }
+
+  .modal-overlay.open { opacity: 1; visibility: visible; }
+
+  .modal {
+    background: var(--dark-2);
+    border: 1px solid rgba(201,168,76,0.3);
+    padding: 3rem;
+    max-width: 480px;
+    width: 100%;
+    transform: translateY(30px);
+    transition: transform 0.4s ease;
+    position: relative;
+  }
+
+  .modal-overlay.open .modal { transform: translateY(0); }
+
+  .modal-close {
+    position: absolute;
+    top: 1rem;
+    right: 1.5rem;
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 24px;
+    cursor: pointer;
+    transition: color 0.2s;
+    line-height: 1;
+  }
+
+  .modal-close:hover { color: var(--gold); }
+
+  .modal-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 32px;
+    font-weight: 300;
+    color: var(--cream);
+    margin-bottom: 0.5rem;
+  }
+
+  .modal-sub {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 2rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid rgba(201,168,76,0.15);
+  }
+
+  .modal-field {
+    margin-bottom: 1.2rem;
+  }
+
+  .modal-label {
+    display: block;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+  }
+
+  .modal-input {
+    width: 100%;
+    background: rgba(201,168,76,0.05);
+    border: 1px solid rgba(201,168,76,0.2);
+    color: var(--cream);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 14px;
+    font-weight: 300;
+    padding: 12px 16px;
+    outline: none;
+    transition: border-color 0.3s;
+    appearance: none;
+  }
+
+  .modal-input:focus { border-color: var(--gold); }
+
+  .modal-submit {
+    width: 100%;
+    background: var(--gold);
+    color: var(--dark);
+    border: none;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    padding: 16px;
+    cursor: pointer;
+    margin-top: 0.5rem;
+    transition: background 0.3s ease;
+  }
+
+  .modal-submit:hover { background: var(--gold-light); }
+
+  .modal-success {
+    text-align: center;
+    padding: 2rem 0;
+    display: none;
+  }
+
+  .modal-success.show { display: block; }
+
+  .success-icon {
+    font-size: 48px;
+    display: block;
+    margin-bottom: 1rem;
+  }
+
+  .success-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 24px;
+    font-style: italic;
+    color: var(--gold);
+    margin-bottom: 0.5rem;
+  }
+
+  .success-sub { font-size: 13px; color: var(--text-muted); }
+
+  /* FOOTER */
+  footer {
+    background: #050e08;
+    padding: 3rem 2rem;
+    text-align: center;
+    border-top: 1px solid rgba(201,168,76,0.1);
+  }
+
+  .footer-brand {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px;
+    font-style: italic;
+    color: var(--gold);
+    margin-bottom: 0.5rem;
+  }
+
+  .footer-sub {
+    font-size: 10px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 2rem;
+  }
+
+  .footer-copy {
+    font-size: 11px;
+    color: rgba(138,158,142,0.4);
+  }
+
+  /* REVEAL ANIMATION */
+  .reveal {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  @media (max-width: 600px) {
+    .infos-grid { grid-template-columns: 1fr; }
+    .info-block.full { grid-column: span 1; }
+    .countdown { gap: 1rem; }
+    .count-num { font-size: 36px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- LOADER -->
+<div class="loader" id="loader">
+  <div class="loader-text">Tahala Mielohasina</div>
+  <div class="loader-line"></div>
+</div>
+
+<!-- MODAL INSCRIPTION -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">×</button>
+    <div id="modal-form-content">
+      <div class="modal-title">Réserver ma place</div>
+      <div class="modal-sub">Places limitées aux 200 premières personnes · Lundi de Pentecôte</div>
+      <div class="modal-field">
+        <label class="modal-label">Nom complet</label>
+        <input class="modal-input" type="text" id="f-nom" placeholder="Votre nom">
+      </div>
+      <div class="modal-field">
+        <label class="modal-label">Email</label>
+        <input class="modal-input" type="email" id="f-email" placeholder="votre@email.com">
+      </div>
+      <div class="modal-field">
+        <label class="modal-label">Nombre d'adultes</label>
+        <select class="modal-input" id="f-nb">
+          <option>1 adulte</option>
+          <option>2 adultes</option>
+          <option>3 adultes</option>
+          <option>4 adultes</option>
+          <option>5 adultes et plus</option>
+        </select>
+      </div>
+      <div class="modal-field">
+        <label class="modal-label">Nombre d'enfants (— de 13 ans)</label>
+        <select class="modal-input" id="f-enfants">
+          <option>Aucun enfant</option>
+          <option>1 enfant</option>
+          <option>2 enfants</option>
+          <option>3 enfants</option>
+          <option>4 enfants et plus</option>
+        </select>
+      </div>
+      <div class="modal-field">
+        <label class="modal-label">Table souhaitée ?</label>
+        <select class="modal-input" id="f-table">
+          <option>Non merci</option>
+          <option>Oui, je souhaite une table</option>
+        </select>
+      </div>
+      <button class="modal-submit" onclick="submitForm()">Confirmer mon inscription →</button>
+    </div>
+    <div class="modal-success" id="modal-success">
+      <span class="success-icon">✦</span>
+      <div class="success-text">Vous êtes redirigé vers WhatsApp !</div>
+      <div class="success-sub">Votre message est pré-rempli. Envoyez-le et nous confirmerons votre place rapidement. À très bientôt chez Tahala.</div>
+    </div>
+  </div>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-bg"></div>
+  <div class="particles" id="particles"></div>
+
+  <div class="badge-top">
+    <span></span> Invitation exclusive · Places limitées <span></span>
+  </div>
+
+  <h1 class="hero-title">
+    Open<br><em>Day</em>
+  </h1>
+
+  <p class="hero-subtitle">Une journée pour profiter, se détendre et partager en plein air</p>
+
+  <div class="hero-date">
+    <div class="date-pill">Lundi de Pentecôte · Centre Tahala Mielohasina</div>
+  </div>
+
+  <div class="scroll-hint">
+    <div class="scroll-line"></div>
+    <span>Découvrir</span>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ACTIVITES -->
+<div class="activites-section">
+  <div class="activites-inner">
+    <div class="reveal">
+      <div class="section-label">Au programme</div>
+      <h2 class="section-title">Tout est inclus<br>dans votre <em>journée</em></h2>
+    </div>
+    <div class="activites-grid reveal">
+      <div class="activite-card">
+        <span class="activite-icon">🏊</span>
+        <div class="activite-name">Piscine</div>
+      </div>
+      <div class="activite-card">
+        <span class="activite-icon">🌿</span>
+        <div class="activite-name">Espaces verts</div>
+      </div>
+      <div class="activite-card">
+        <span class="activite-icon">🎵</span>
+        <div class="activite-name">Animation DJ</div>
+      </div>
+      <div class="activite-card">
+        <span class="activite-icon">🎤</span>
+        <div class="activite-name">Karaoké</div>
+      </div>
+      <div class="activite-card">
+        <span class="activite-icon">🚴</span>
+        <div class="activite-name">VTT</div>
+      </div>
+      <div class="activite-card">
+        <span class="activite-icon">🏟️</span>
+        <div class="activite-name">Terrains outdoor</div>
+      </div>
+      <div class="activite-card featured" style="grid-column: span 2;">
+        <span class="activite-icon">🏎️</span>
+        <div class="activite-name">1 session de karting offerte</div>
+      </div>
+    </div>
+    <div class="karting-note-small reveal">Sessions supplémentaires disponibles · 25 000 Ar / 8 min</div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- INFOS PRATIQUES -->
+<section>
+  <div class="reveal">
+    <div class="section-label">Infos pratiques</div>
+    <h2 class="section-title">Tout ce qu'il<br>faut <em>savoir</em></h2>
+  </div>
+
+  <div class="infos-grid reveal">
+    <div class="info-block">
+      <div class="info-label">Adulte</div>
+      <div class="info-value">75 000 Ar</div>
+      <div class="info-sub">1 session karting offerte</div>
+    </div>
+    <div class="info-block">
+      <div class="info-label">Enfant <span style="font-size:10px;color:var(--gold);">— de 13 ans</span></div>
+      <div class="info-value">50 000 Ar</div>
+      <div class="info-sub">1 session karting offerte</div>
+    </div>
+    <div class="info-block full">
+      <div class="info-label">Paiement · À l'avance</div>
+      <div class="info-value" style="font-size:22px; display:flex; gap:1.5rem; flex-wrap:wrap;">
+        <span>💵 Espèces</span>
+        <span style="color:var(--text-muted); font-size:18px;">·</span>
+        <span>📱 Mobile Money</span>
+      </div>
+      <div class="info-sub" style="margin-top:10px;">Coordonnées transmises via WhatsApp dès confirmation de votre inscription.</div>
+    </div>
+    <div class="info-block full">
+      <div class="info-label">Concept · Picnic privé</div>
+      <div class="info-sub" style="font-size:14px; color:var(--text-light); line-height:1.8;">Apportez votre nourriture et profitez de nos espaces extérieurs. Des tables sont disponibles sur demande à l'inscription.</div>
+    </div>
+  </div>
+
+  <div class="picnic-block reveal">
+    <p>Une journée pensée pour <span>vous ressourcer</span>, retrouver vos proches et profiter d'un cadre exceptionnel — loin de l'agitation du quotidien.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ACCES PRIVE -->
+<div class="acces-section">
+  <div class="acces-inner">
+    <div class="reveal">
+      <div class="section-label">Accès & conditions</div>
+      <h2 class="section-title">Un événement<br><em>privé & exclusif</em></h2>
+    </div>
+
+    <div class="acces-cards">
+      <div class="acces-card reveal">
+        <div class="acces-num">01</div>
+        <div class="acces-title-card">Inscription nominative</div>
+        <div class="acces-desc">L'entrée se fait sur liste. Votre nom sera vérifié à l'arrivée.</div>
+      </div>
+      <div class="acces-card reveal">
+        <div class="acces-num">02</div>
+        <div class="acces-title-card">Places limitées</div>
+        <div class="acces-desc">200 participants maximum. Les premières inscriptions ont priorité.</div>
+      </div>
+      <div class="acces-card reveal">
+        <div class="acces-num">03</div>
+        <div class="acces-title-card">Paiement à l'avance</div>
+        <div class="acces-desc">En espèces, avant l'événement. Nos coordonnées vous sont transmises par WhatsApp dès confirmation.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CTA -->
+<div class="cta-section">
+  <div class="cta-bg"></div>
+
+  <div class="reveal">
+    <h2 class="cta-title">Votre place<br>vous <em>attend</em></h2>
+    <p class="cta-sub">200 places · Lundi de Pentecôte · Tahala Mielohasina</p>
+
+    <button class="cta-btn" onclick="openModal()">
+      <span>Réserver ma place</span>
+      <span class="cta-btn-arrow">→</span>
+    </button>
+  </div>
+
+  <div class="countdown reveal">
+    <div class="count-block">
+      <span class="count-num" id="cd-days">--</span>
+      <span class="count-label">Jours</span>
+    </div>
+    <div class="count-sep">:</div>
+    <div class="count-block">
+      <span class="count-num" id="cd-hours">--</span>
+      <span class="count-label">Heures</span>
+    </div>
+    <div class="count-sep">:</div>
+    <div class="count-block">
+      <span class="count-num" id="cd-mins">--</span>
+      <span class="count-label">Minutes</span>
+    </div>
+    <div class="count-sep">:</div>
+    <div class="count-block">
+      <span class="count-num" id="cd-secs">--</span>
+      <span class="count-label">Secondes</span>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-brand">Tahala Mielohasina</div>
+  <div class="footer-sub">Centre de loisirs · Open Day · Lundi de Pentecôte</div>
+
+  <div style="display:flex; justify-content:center; gap:1rem; margin: 1.5rem 0; flex-wrap:wrap;">
+    <a href="https://wa.me/261321204004" target="_blank" style="
+      display:inline-flex; align-items:center; gap:10px;
+      background: #25D366; color: #fff;
+      font-family:'Montserrat',sans-serif; font-size:11px; font-weight:500;
+      letter-spacing:2px; text-transform:uppercase;
+      padding:14px 28px; text-decoration:none;
+      border-radius:2px; transition: opacity 0.2s;
+    " onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      WhatsApp
+    </a>
+    <a href="tel:+261321204004" style="
+      display:inline-flex; align-items:center; gap:10px;
+      background: transparent; color: var(--gold);
+      font-family:'Montserrat',sans-serif; font-size:11px; font-weight:500;
+      letter-spacing:2px; text-transform:uppercase;
+      padding:14px 28px; text-decoration:none;
+      border: 1px solid rgba(201,168,76,0.4);
+      border-radius:2px; transition: border-color 0.2s;
+    " onmouseover="this.style.borderColor='rgba(201,168,76,0.9)'" onmouseout="this.style.borderColor='rgba(201,168,76,0.4)'">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 10.8 19.79 19.79 0 012 2.18 2 2 0 014 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+      Appeler
+    </a>
+  </div>
+
+  <div class="footer-copy">© 2025 Tahala Mielohasina · Tous droits réservés</div>
+</footer>
+
+<script>
+  // LOADER
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      document.getElementById('loader').classList.add('hidden');
+    }, 2000);
+  });
+
+  // PARTICLES
+  const pc = document.getElementById('particles');
+  for (let i = 0; i < 18; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    const size = Math.random() * 3 + 1;
+    p.style.cssText = `width:${size}px;height:${size}px;left:${Math.random()*100}%;--dur:${Math.random()*8+6}s;--delay:${Math.random()*6}s;`;
+    pc.appendChild(p);
+  }
+
+  // SCROLL REVEAL
+  const reveals = document.querySelectorAll('.reveal');
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        setTimeout(() => e.target.classList.add('visible'), i * 80);
+      }
+    });
+  }, { threshold: 0.1 });
+  reveals.forEach(r => obs.observe(r));
+
+  // MODAL
+  function openModal() {
+    document.getElementById('modal').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal() {
+    document.getElementById('modal').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  document.getElementById('modal').addEventListener('click', function(e) {
+    if (e.target === this) closeModal();
+  });
+
+  function submitForm() {
+    const nom = document.getElementById('f-nom').value.trim();
+    const email = document.getElementById('f-email').value.trim();
+    const nb = document.getElementById('f-nb').value;
+    const enfants = document.getElementById('f-enfants').value;
+    const table = document.getElementById('f-table').value;
+    if (!nom || !email) { alert('Veuillez renseigner votre nom et email.'); return; }
+    const msg = encodeURIComponent(
+      `Bonjour Tahala Mielohasina 👋\n\nJe souhaite m'inscrire à l'Open Day du Lundi de Pentecôte.\n\n` +
+      `📋 Nom : ${nom}\n📧 Email : ${email}\n👥 Adultes : ${nb}\n👧 Enfants (— 13 ans) : ${enfants}\n🪑 Table souhaitée : ${table}\n\n` +
+      `Merci de me confirmer ma place et de m'envoyer vos coordonnées pour le paiement à l'avance.`
+    );
+    window.open(`https://wa.me/261321204004?text=${msg}`, '_blank');
+    document.getElementById('modal-form-content').style.display = 'none';
+    document.getElementById('modal-success').classList.add('show');
+  }
+
+  // COUNTDOWN — Lundi de Pentecôte 2025 = 9 juin 2025
+  const eventDate = new Date('2025-06-09T08:00:00');
+
+  function updateCountdown() {
+    const now = new Date();
+    const diff = eventDate - now;
+    if (diff <= 0) {
+      document.getElementById('cd-days').textContent = '00';
+      document.getElementById('cd-hours').textContent = '00';
+      document.getElementById('cd-mins').textContent = '00';
+      document.getElementById('cd-secs').textContent = '00';
+      return;
+    }
+    const d = Math.floor(diff / 86400000);
+    const h = Math.floor((diff % 86400000) / 3600000);
+    const m = Math.floor((diff % 3600000) / 60000);
+    const s = Math.floor((diff % 60000) / 1000);
+    document.getElementById('cd-days').textContent = String(d).padStart(2,'0');
+    document.getElementById('cd-hours').textContent = String(h).padStart(2,'0');
+    document.getElementById('cd-mins').textContent = String(m).padStart(2,'0');
+    document.getElementById('cd-secs').textContent = String(s).padStart(2,'0');
+  }
+
+  updateCountdown();
+  setInterval(updateCountdown, 1000);
+</script>
+</body>
+</html>
